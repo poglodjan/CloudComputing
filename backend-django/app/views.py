@@ -215,24 +215,34 @@ def get_parent_email_by_student(request, student_id):
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from google.cloud import aiplatform
 import requests
 import logging
+_vertex_endpoint = None
 
-# Inicjalizacja Vertex AI - wykonaj to tylko raz przy starcie
-aiplatform.init(project="psychological-app-a359c", location="europe-central2")
-# Endpoint do modelu emotions
-vertex_endpoint = aiplatform.Endpoint(
-    endpoint_name="projects/psychological-app-a359c/locations/europe-central2/endpoints/43404321018085376"
-)
-# Endpoint do modelu shapes
-vertex_shapes_endpoint = aiplatform.Endpoint(
-    endpoint_name="projects/psychological-app-a359c/locations/europe-central2/endpoints/592843475557285888"  
-)
-# Endpoint do modelu questionnaires
-vertex_questionnaires_endpoint = aiplatform.Endpoint(
-    endpoint_name="projects/psychological-app-a359c/locations/europe-central2/endpoints/608606074253082624"
-)
+
+def get_vertex_endpoint():
+    global _vertex_endpoint
+
+    if _vertex_endpoint is None:
+        from google.cloud import aiplatform
+
+        # Inicjalizacja Vertex AI - wykonaj to tylko raz przy starcie
+        aiplatform.init(project="psychological-app-a359c", location="europe-central2")
+        # Endpoint do modelu emotions
+        vertex_endpoint = aiplatform.Endpoint(
+            endpoint_name="projects/psychological-app-a359c/locations/europe-central2/endpoints/43404321018085376"
+        )
+        # Endpoint do modelu shapes
+        vertex_shapes_endpoint = aiplatform.Endpoint(
+            endpoint_name="projects/psychological-app-a359c/locations/europe-central2/endpoints/592843475557285888"  
+        )
+        # Endpoint do modelu questionnaires
+        vertex_questionnaires_endpoint = aiplatform.Endpoint(
+            endpoint_name="projects/psychological-app-a359c/locations/europe-central2/endpoints/608606074253082624"
+        )
+
+    return _vertex_endpoint
+
 
 class PredictEmotionsView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -243,7 +253,7 @@ class PredictEmotionsView(APIView):
                 [row["happy"], row["angry"], row["sad"], float(row["time"])]
                 for row in raw_data
             ]
-            prediction_response = vertex_endpoint.predict(instances=instances)
+            prediction_response = get_vertex_endpoint().predict(instances=instances)
             return Response({"predictions": prediction_response.predictions}, status=200)
 
         except requests.exceptions.RequestException as e:
@@ -288,7 +298,7 @@ class PredictShapesView(APIView):
                 return Response({"error": "Brak danych kształtów dla tego studenta."}, status=404)
 
             # 4. Wywołaj endpoint modelu
-            prediction_response = vertex_shapes_endpoint.predict(instances=instances)
+            prediction_response = get_vertex_endpoint().predict(instances=instances)
 
             # 5. Funkcja konwertująca Decimal na float
             def convert_decimals(obj):
@@ -320,7 +330,7 @@ class PredictQuestionnaire1View(APIView):
                 return Response({"error": "No data for given student"}, status=404)
 
             instance = [[data.get(k, 0) or 0 for k in question_keys]]
-            prediction_response = vertex_questionnaires_endpoint.predict(instances=instance)
+            prediction_response = get_vertex_endpoint().predict(instances=instance)
             return Response({"predictions": prediction_response.predictions}, status=200)
 
         except requests.exceptions.RequestException as e:
@@ -346,7 +356,7 @@ class PredictQuestionnaire2View(APIView):
                 return Response({"error": "No data for given student"}, status=404)
 
             instance = [[data.get(k, 0) or 0 for k in question_keys]]
-            prediction_response = vertex_questionnaires_endpoint.predict(instances=instance)
+            prediction_response = get_vertex_endpoint().predict(instances=instance)
             return Response({"predictions": prediction_response.predictions}, status=200)
 
         except requests.exceptions.RequestException as e:
@@ -375,7 +385,7 @@ class PredictEnsembleView(APIView):
                 for row in raw_emotions
             ]
             if emotion_instances:
-                emotion_result = vertex_endpoint.predict(instances=emotion_instances)
+                emotion_result = get_vertex_endpoint().predict(instances=emotion_instances)
                 predictions += [round(p) for p in emotion_result.predictions]
 
             # 2. Predict shapes
@@ -397,7 +407,7 @@ class PredictEnsembleView(APIView):
             ]
             
             if shape_instances:
-                shape_result = vertex_shapes_endpoint.predict(instances=shape_instances)
+                shape_result = get_vertex_endpoint().predict(instances=shape_instances)
                 predictions += [round(p) for p in shape_result.predictions]
 
             # 3. Predict questionnaire - autism
@@ -405,14 +415,14 @@ class PredictEnsembleView(APIView):
             data_autism = FactAutismTeacherSurveyDataset.objects.filter(student_id=student_id).values(*question_keys).first()
             if data_autism:
                 autism_instance = [[data_autism.get(k, 0) or 0 for k in question_keys]]
-                autism_result = vertex_questionnaires_endpoint.predict(instances=autism_instance)
+                autism_result =get_vertex_endpoint().predict(instances=autism_instance)
                 predictions += [round(p) for p in autism_result.predictions]
 
             # 4. Predict questionnaire - ADHD
             data_adhd = FactTeacherSurveyDataset.objects.filter(student_id=student_id).values(*question_keys).first()
             if data_adhd:
                 adhd_instance = [[data_adhd.get(k, 0) or 0 for k in question_keys]]
-                adhd_result = vertex_questionnaires_endpoint.predict(instances=adhd_instance)
+                adhd_result = get_vertex_endpoint().predict(instances=adhd_instance)
                 predictions += [round(p) for p in adhd_result.predictions]
 
             if not predictions:

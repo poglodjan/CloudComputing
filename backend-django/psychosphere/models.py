@@ -1,23 +1,33 @@
-# backend-django/psychosphere/models.py
-
-from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from django.utils.text import slugify
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(max_length=120, unique=True, blank=True)
-    description = models.TextField(blank=True)
-    image_url = models.URLField(blank=True)
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+    )
+
+    slug = models.SlugField(
+        max_length=120,
+        unique=True,
+        blank=True,
+    )
+
+    description = models.TextField(
+        blank=True,
+    )
 
     class Meta:
-        verbose_name_plural = "Categories"
         ordering = ["name"]
+        verbose_name = "Kategoria"
+        verbose_name_plural = "Kategorie"
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -25,12 +35,26 @@ class Category(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    slug = models.SlugField(max_length=60, unique=True, blank=True)
+    name = models.CharField(
+        max_length=60,
+        unique=True,
+    )
+
+    slug = models.SlugField(
+        max_length=70,
+        unique=True,
+        blank=True,
+    )
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "Tag"
+        verbose_name_plural = "Tagi"
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -39,92 +63,101 @@ class Tag(models.Model):
 
 class Article(models.Model):
     class Status(models.TextChoices):
-        DRAFT = "draft", "Draft"
-        PUBLISHED = "published", "Published"
-        ARCHIVED = "archived", "Archived"
+        DRAFT = "draft", "Szkic"
+        PUBLISHED = "published", "Opublikowany"
+        ARCHIVED = "archived", "Zarchiwizowany"
 
-    title = models.CharField(max_length=250)
-    slug = models.SlugField(max_length=280, unique=True, blank=True)
+    title = models.CharField(
+        max_length=250,
+    )
+
+    slug = models.SlugField(
+        max_length=280,
+        unique=True,
+        blank=True,
+    )
 
     excerpt = models.TextField(
-        help_text="Krótki opis widoczny na karcie artykułu."
+        help_text="Krótki opis wyświetlany na karcie artykułu.",
     )
-    content = models.TextField()
 
-    cover_image_url = models.URLField(blank=True)
+    content = models.TextField(
+        help_text="Pełna treść artykułu. Oddzielaj akapity pustą linią.",
+    )
+
+    image_url = models.URLField(
+        max_length=1000,
+        blank=True,
+        help_text="Adres URL zdjęcia wyświetlanego na karcie.",
+    )
 
     category = models.ForeignKey(
         Category,
         related_name="articles",
         on_delete=models.PROTECT,
     )
+
     tags = models.ManyToManyField(
         Tag,
         related_name="articles",
         blank=True,
     )
 
-    is_premium = models.BooleanField(default=False)
-    is_featured = models.BooleanField(default=False)
+    read_time_minutes = models.PositiveSmallIntegerField(
+        default=5,
+    )
+
+    is_premium = models.BooleanField(
+        default=False,
+    )
+
+    is_featured = models.BooleanField(
+        default=False,
+    )
 
     status = models.CharField(
         max_length=20,
         choices=Status.choices,
         default=Status.DRAFT,
+        db_index=True,
     )
 
-    author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        related_name="psychosphere_articles",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+    published_at = models.DateTimeField(
+        default=timezone.now,
+        db_index=True,
     )
 
-    published_at = models.DateTimeField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
 
     class Meta:
         ordering = ["-published_at", "-created_at"]
+        verbose_name = "Artykuł"
+        verbose_name_plural = "Artykuły"
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
+            self.slug = self.generate_unique_slug()
+
         super().save(*args, **kwargs)
+
+    def generate_unique_slug(self):
+        base_slug = slugify(self.title) or "artykul"
+        candidate = base_slug
+        number = 2
+
+        while Article.objects.exclude(pk=self.pk).filter(
+            slug=candidate
+        ).exists():
+            candidate = f"{base_slug}-{number}"
+            number += 1
+
+        return candidate
 
     def __str__(self):
         return self.title
-
-
-class Subscription(models.Model):
-    class Status(models.TextChoices):
-        ACTIVE = "active", "Active"
-        CANCELLED = "cancelled", "Cancelled"
-        EXPIRED = "expired", "Expired"
-
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        related_name="psychosphere_subscription",
-        on_delete=models.CASCADE,
-    )
-
-    status = models.CharField(
-        max_length=20,
-        choices=Status.choices,
-        default=Status.EXPIRED,
-    )
-
-    started_at = models.DateTimeField(null=True, blank=True)
-    expires_at = models.DateTimeField(null=True, blank=True)
-
-    external_subscription_id = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.user} – {self.status}"

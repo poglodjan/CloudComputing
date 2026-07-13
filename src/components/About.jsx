@@ -11,10 +11,9 @@ const AboutUs = () => {
     justifyContent: "center",
     gap: "8rem",
     width: "100vw",
-    height: "100vh",
+    minheight: "100vh",
     boxSizing: "border-box",
-    padding: "2rem",
-    overflow: "hidden",
+    padding: "8rem 0",
   }}
 >
       <div style={{ flex: 1, maxWidth: "1200px" }}>

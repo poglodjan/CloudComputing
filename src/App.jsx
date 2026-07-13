@@ -16,7 +16,9 @@ import React, { useEffect } from 'react';
 import StudentProfile from "./components/StudentProfile"; 
 import Class from "./components/Class";
 import ChildPage from "./components/ChildPage";
-
+import PsychoSpherePage from "./psychosphere-pages/PsychoSpherePage";
+import ArticlePage from "./psychosphere-pages/ArticlePage";
+import SubscriptionPage from "./psychosphere-pages/SubscriptionPage";
 
 function App() {
   useEffect(() => {
@@ -36,13 +38,24 @@ function App() {
           <Route path="/complete-profile" element={<CompleteProfile />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-          <Route path="/psychosphere" element={<PsychoSphere />} />
+          <Route
+            path="/psychosphere"
+            element={<PsychoSpherePage />}
+          />
+
+          <Route
+            path="/psychosphere/articles/:slug"
+            element={<ArticlePage />}
+          />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/Logout" element={<Logout />} />
           <Route path="/child" element={<ChildPage />} />
           <Route path="/students/:id" element={<StudentProfile />} />
           <Route path="/class" element={<Class><Dashboard /></Class>} />
-          
+          <Route
+            path="/psychosphere/subscription"
+            element={<SubscriptionPage />}
+          />
         </Routes>
       </Router>
     </AuthProvider>

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'app',
     'rest_framework',
+    'psychosphere',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +56,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -172,3 +172,4 @@ LOGGING = {
     },
 }
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

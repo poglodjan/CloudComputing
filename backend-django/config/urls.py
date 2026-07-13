@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from app.views import (
     StudentDetailView, TeacherListView, ParentListView,
     WritingDataCreateView, ShapesDataCreateView, EmotionsDataCreateView,
@@ -13,7 +13,11 @@ from app.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
+    #obsluga podaplikacji artykułów - psychosphere
+    path(
+    "api/psychosphere/",
+    include("psychosphere.urls"),
+    ),
     # GET users
     path('teachers/', TeacherListView.as_view(), name='teacher_list'),
     path('parents/', ParentListView.as_view(), name='parent_list'),
