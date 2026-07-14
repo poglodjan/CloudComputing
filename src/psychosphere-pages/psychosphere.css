@@ -874,3 +874,43 @@ body {
     padding: 32px 20px;
   }
 }
+
+/* KATEGORIE NA ZDJĘCIU KARTY */
+
+.ps-card__categories {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  pointer-events: none;
+}
+
+.ps-card__categories .ps-card__category {
+  position: static;
+  display: inline-flex;
+  width: auto;
+  max-width: 100%;
+  padding: 7px 11px;
+  overflow: hidden;
+  font-size: 0.73rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: rgba(30, 27, 75, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+}
+
+/* AUTOR NA KARCIE */
+
+.ps-card__author {
+  margin: -7px 0 10px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #5b21b6;
+}

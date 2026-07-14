@@ -77,6 +77,12 @@ class Article(models.Model):
         blank=True,
     )
 
+    author = models.CharField(
+        max_length=150,
+        default="Redakcja PsychSphere",
+        help_text="Imię i nazwisko autora wyświetlane przy artykule.",
+    )
+
     excerpt = models.TextField(
         help_text="Krótki opis wyświetlany na karcie artykułu.",
     )
@@ -91,10 +97,10 @@ class Article(models.Model):
         help_text="Adres URL zdjęcia wyświetlanego na karcie.",
     )
 
-    category = models.ForeignKey(
+    categories = models.ManyToManyField(
         Category,
         related_name="articles",
-        on_delete=models.PROTECT,
+        verbose_name="Kategorie",
     )
 
     tags = models.ManyToManyField(

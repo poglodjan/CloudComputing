@@ -25,8 +25,15 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class ArticleListSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
-    tags = TagSerializer(many=True, read_only=True)
+    categories = CategorySerializer(
+        many=True,
+        read_only=True,
+    )
+
+    tags = TagSerializer(
+        many=True,
+        read_only=True,
+    )
 
     class Meta:
         model = Article
@@ -34,9 +41,10 @@ class ArticleListSerializer(serializers.ModelSerializer):
             "id",
             "slug",
             "title",
+            "author",
             "excerpt",
             "image_url",
-            "category",
+            "categories",
             "tags",
             "read_time_minutes",
             "is_premium",
@@ -46,8 +54,15 @@ class ArticleListSerializer(serializers.ModelSerializer):
 
 
 class ArticleDetailSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
-    tags = TagSerializer(many=True, read_only=True)
+    categories = CategorySerializer(
+        many=True,
+        read_only=True,
+    )
+
+    tags = TagSerializer(
+        many=True,
+        read_only=True,
+    )
 
     content = serializers.SerializerMethodField()
     has_access = serializers.SerializerMethodField()
@@ -58,10 +73,11 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
             "id",
             "slug",
             "title",
+            "author",
             "excerpt",
             "content",
             "image_url",
-            "category",
+            "categories",
             "tags",
             "read_time_minutes",
             "is_premium",
@@ -71,8 +87,6 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
         ]
 
     def get_has_access(self, article):
-        # Na razie nie mamy subskrypcji.
-        # Artykuły darmowe są dostępne, premium są zablokowane.
         return not article.is_premium
 
     def get_content(self, article):

@@ -39,7 +39,8 @@ class TagAdmin(admin.ModelAdmin):
 class ArticleAdmin(admin.ModelAdmin):
     list_display = [
         "title",
-        "category",
+        "author",
+        "display_categories",
         "status",
         "is_premium",
         "is_featured",
@@ -50,12 +51,13 @@ class ArticleAdmin(admin.ModelAdmin):
         "status",
         "is_premium",
         "is_featured",
-        "category",
+        "categories",
         "tags",
     ]
 
     search_fields = [
         "title",
+        "author",
         "excerpt",
         "content",
     ]
@@ -65,6 +67,7 @@ class ArticleAdmin(admin.ModelAdmin):
     }
 
     filter_horizontal = [
+        "categories",
         "tags",
     ]
 
@@ -80,6 +83,7 @@ class ArticleAdmin(admin.ModelAdmin):
                 "fields": [
                     "title",
                     "slug",
+                    "author",
                     "excerpt",
                     "content",
                     "image_url",
@@ -90,7 +94,7 @@ class ArticleAdmin(admin.ModelAdmin):
             "Klasyfikacja",
             {
                 "fields": [
-                    "category",
+                    "categories",
                     "tags",
                 ]
             },
@@ -117,3 +121,10 @@ class ArticleAdmin(admin.ModelAdmin):
             },
         ),
     ]
+
+    @admin.display(description="Kategorie")
+    def display_categories(self, article):
+        return ", ".join(
+            category.name
+            for category in article.categories.all()
+        )

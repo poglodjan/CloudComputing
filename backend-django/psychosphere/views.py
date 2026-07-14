@@ -15,9 +15,6 @@ from .serializers import (
 
 class PublicPsychosphereViewMixin:
     permission_classes = [AllowAny]
-
-    # PsychSphere jest na razie całkowicie publiczna.
-    # Nie uruchamiamy FirebaseAuthentication dla tych endpointów.
     authentication_classes = []
 
 
@@ -31,28 +28,46 @@ class ArticleListView(PublicPsychosphereViewMixin, ListAPIView):
                 status=Article.Status.PUBLISHED,
                 published_at__lte=timezone.now(),
             )
-            .select_related("category")
-            .prefetch_related("tags")
+            .prefetch_related(
+                "categories",
+                "tags",
+            )
         )
 
-        search = self.request.query_params.get("search", "").strip()
-        category = self.request.query_params.get("category", "").strip()
-        tag = self.request.query_params.get("tag", "").strip()
+        search = self.request.query_params.get(
+            "search",
+            "",
+        ).strip()
+
+        category = self.request.query_params.get(
+            "category",
+            "",
+        ).strip()
+
+        tag = self.request.query_params.get(
+            "tag",
+            "",
+        ).strip()
 
         if search:
             queryset = queryset.filter(
                 Q(title__icontains=search)
+                | Q(author__icontains=search)
                 | Q(excerpt__icontains=search)
                 | Q(content__icontains=search)
-                | Q(category__name__icontains=search)
+                | Q(categories__name__icontains=search)
                 | Q(tags__name__icontains=search)
             ).distinct()
 
         if category:
-            queryset = queryset.filter(category__slug=category)
+            queryset = queryset.filter(
+                categories__slug=category
+            ).distinct()
 
         if tag:
-            queryset = queryset.filter(tags__slug=tag)
+            queryset = queryset.filter(
+                tags__slug=tag
+            ).distinct()
 
         return queryset
 
@@ -71,8 +86,10 @@ class ArticleDetailView(
                 status=Article.Status.PUBLISHED,
                 published_at__lte=timezone.now(),
             )
-            .select_related("category")
-            .prefetch_related("tags")
+            .prefetch_related(
+                "categories",
+                "tags",
+            )
         )
 
 
