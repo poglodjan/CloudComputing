@@ -11,6 +11,10 @@ environ.Env.read_env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+IS_CLOUD_ENVIRONMENT = bool(
+    os.environ.get("K_REVISION")
+    or os.environ.get("CLOUD_RUN_JOB")
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -19,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-n6h3rw#=rpi_oubg!prwa1zlw04_9ee$$if3yw1&m$u1bu%52m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = not IS_CLOUD_ENVIRONMENT
 
 # SECURITY WARNING: It's recommended that you use this when
 # running in production. The URLs will be known once you first deploy
@@ -86,27 +90,32 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-if os.environ.get('K_REVISION', None):
+if IS_CLOUD_ENVIRONMENT:
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'HOST': '/cloudsql/psychological-app-a359c:europe-central2:psychological-db',
-        'PORT': '5432',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres_password',
-    }
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "HOST": (
+                "/cloudsql/"
+                "psychological-app-a359c:"
+                "europe-central2:"
+                "psychological-db"
+            ),
+            "PORT": "5432",
+            "NAME": "postgres",
+            "USER": "postgres",
+            "PASSWORD": "postgres_password",
+        }
     }
 else:
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'HOST': '127.0.0.1',
-        'PORT': '5433',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres_password',
-    }
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "HOST": "127.0.0.1",
+            "PORT": "5433",
+            "NAME": "postgres",
+            "USER": "postgres",
+            "PASSWORD": "postgres_password",
+        }
     }
 
 
