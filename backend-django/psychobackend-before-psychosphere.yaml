@@ -1,0 +1,75 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/ingress-status: all
+    run.googleapis.com/urls: '["https://psychobackend-312700987588.europe-central2.run.app","https://psychobackend-xsbjnuaesq-lm.a.run.app"]'
+  labels:
+    cloud.googleapis.com/location: europe-central2
+  name: psychobackend
+  namespace: '312700987588'
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: '40'
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 517.0.0
+        run.googleapis.com/cloudsql-instances: psychological-app-a359c:europe-central2:psychological-db
+        run.googleapis.com/startup-cpu-boost: 'true'
+      labels:
+        client.knative.dev/nonce: aapnahcaej
+        run.googleapis.com/startupProbeType: Default
+    spec:
+      containerConcurrency: 80
+      containers:
+      - env:
+        - name: CLOUDRUN_SERVICE_URLS
+          value: https://psychobackend-312700987588.europe-central2.run.app
+        image: europe-central2-docker.pkg.dev/psychological-app-a359c/psycho-docker/quickstart
+        name: quickstart-1
+        ports:
+        - containerPort: 8080
+          name: http1
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+        startupProbe:
+          failureThreshold: 1
+          periodSeconds: 240
+          tcpSocket:
+            port: 8080
+          timeoutSeconds: 240
+      serviceAccountName: 312700987588-compute@developer.gserviceaccount.com
+      timeoutSeconds: 300
+  traffic:
+  - percent: 100
+    revisionName: psychobackend-00112-wpp
+  - revisionName: psychobackend-00027-krv
+    tag: dziala
+  - revisionName: psychobackend-00037-tjc
+    tag: dzialabezpredict
+  - revisionName: psychobackend-00044-npw
+    tag: corsok
+  - revisionName: psychobackend-00047-7wj
+    tag: dzialavertex
+  - revisionName: psychobackend-00049-f95
+    tag: dziala2
+  - revisionName: psychobackend-00077-snd
+    tag: nowe-uczniowie
+  - revisionName: psychobackend-00079-tds
+    tag: update-cors
+  - revisionName: psychobackend-00080-4ll
+    tag: added-package
+  - revisionName: psychobackend-00082-fql
+    tag: trying-add-auth
+  - revisionName: psychobackend-00098-jl6
+    tag: dziala-janka-api
+  - revisionName: psychobackend-00097-nxq
+    tag: dziala-pauli-backend
+  - revisionName: psychobackend-00102-bnr
+    tag: michal-child-pred
+  - revisionName: psychobackend-00112-wpp
+    tag: finish

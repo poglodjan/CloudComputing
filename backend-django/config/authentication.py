@@ -2,7 +2,7 @@
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 import firebase_admin
-from firebase_admin import auth, credentials
+from firebase_admin import auth
 import logging
 
 logger = logging.getLogger(__name__)
@@ -11,8 +11,7 @@ from django.contrib.auth.models import AnonymousUser
 
 # Inicjalizujemy Firebase tylko raz
 if not firebase_admin._apps:
-    cred = credentials.Certificate("config/firebaseServiceAccountKey.json")
-    firebase_admin.initialize_app(cred)
+    firebase_admin.initialize_app()
 
 
 class FirebaseAuthentication(BaseAuthentication):

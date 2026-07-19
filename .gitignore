@@ -42,3 +42,9 @@ project_document.pdf
 node_modules
 CloudComputing.git/
 backend/credentials_to_connect_with_cloudsql.json
+
+firebaseServiceAccountKey.json
+**/firebaseServiceAccountKey.json
+.env
+**/.env
+backend-django/config/firebaseServiceAccountKey.json

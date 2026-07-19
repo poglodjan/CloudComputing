@@ -20,24 +20,36 @@ IS_CLOUD_ENVIRONMENT = bool(
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-n6h3rw#=rpi_oubg!prwa1zlw04_9ee$$if3yw1&m$u1bu%52m'
 
+SECRET_KEY = env(
+    "DJANGO_SECRET_KEY",
+    default="local-development-secret-key"
+)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = not IS_CLOUD_ENVIRONMENT
 
 # SECURITY WARNING: It's recommended that you use this when
 # running in production. The URLs will be known once you first deploy
 # to Cloud Run. This code takes the URLs and converts it to both these settings formats.
-CLOUDRUN_SERVICE_URLS = env("CLOUDRUN_SERVICE_URLS", default=None)
-if CLOUDRUN_SERVICE_URLS:
-    CSRF_TRUSTED_ORIGINS = env("CLOUDRUN_SERVICE_URLS").split(",")
-    # Remove the scheme from URLs for ALLOWED_HOSTS
-    ALLOWED_HOSTS = [urlparse(url).netloc for url in CSRF_TRUSTED_ORIGINS]
 
+
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    ".run.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+    "https://*.run.app",
+]
+
+if IS_CLOUD_ENVIRONMENT:
     SECURE_SSL_REDIRECT = True
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-else:
-    ALLOWED_HOSTS = ["*"]
+    SECURE_PROXY_SSL_HEADER = (
+        "HTTP_X_FORWARDED_PROTO",
+        "https",
+    )
 
 
 # Application definition
@@ -59,6 +71,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -101,9 +114,9 @@ if IS_CLOUD_ENVIRONMENT:
                 "psychological-db"
             ),
             "PORT": "5432",
-            "NAME": "postgres",
-            "USER": "postgres",
-            "PASSWORD": "postgres_password",
+            "NAME": env("DB_NAME", default="postgres"),
+            "USER": env("DB_USER", default="postgres"),
+            "PASSWORD": env("DB_PASSWORD", default="postgres"),
         }
     }
 else:
@@ -154,8 +167,26 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-CORS_ALLOW_ALL_ORIGINS = True 
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": (
+            "whitenoise.storage."
+            "CompressedManifestStaticFilesStorage"
+        ),
+    },
+}
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "https://psychological-app-a359c.web.app",
+    "https://psychological-app-a359c.firebaseapp.com",
+]
+
 CORS_ALLOW_CREDENTIALS = True
 
 REST_FRAMEWORK = {
