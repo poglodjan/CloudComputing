@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext"; // Import the custom hook
 import "./Navbar.css"; // Import CSS for styling
 
@@ -13,23 +13,23 @@ console.log("Role:", role);
           <div className="logo">Neurodetective</div>
 
           <div className="nav-sections">
-              <ul className="nav-links">
-                  <li><Link to="/">Home</Link></li>
-                  <li><Link to="/about">About Us</Link></li>
-                  <li><Link to="/psychosphere">PsychoSphere</Link></li>
+              <ul className="nav-NavLinks">
+                  <li><NavLink to="/">Home</NavLink></li>
+                  <li><NavLink to="/about">About Us</NavLink></li>
+                  <li><NavLink to="/psychosphere">PsychoSphere</NavLink></li>
 
                   {role === "student" && (
                       <>
-                          <li><Link to="/my-humor">My Humor</Link></li>
-                          <li><Link to="/games">Games</Link></li>
+                          <li><NavLink to="/my-humor">My Humor</NavLink></li>
+                          <li><NavLink to="/games">Games</NavLink></li>
                       </>
                   )}
                   {role === "parent" && (
-                      <li><Link to="/child">Child</Link></li>
+                      <li><NavLink to="/child">Child</NavLink></li>
                   )}
                   {role === "teacher" && (
                     <>
-                        <li><Link to="/class">Class</Link></li>
+                        <li><NavLink to="/class">Class</NavLink></li>
                         <li>
                         <a
                             href="https://docs.google.com/forms/d/e/1FAIpQLSfQPTijbJQb-Ub7jHNwXllJeNit5hWAWKV3l419yirSqU7lNw/viewform?usp=header"
@@ -55,9 +55,9 @@ console.log("Role:", role);
 
               <div className="logout-section">
                   {user ? (
-                      <Link to="/logout" className="logout-button">Logout</Link>
+                      <NavLink to="/logout" className="logout-button">Logout</NavLink>
                   ) : (
-                      <Link to="/login">Login/Register</Link>
+                      <NavLink to="/login">Login/Register</NavLink>
                   )}
               </div>
           </div>

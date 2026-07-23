@@ -1,5 +1,5 @@
 const API_URL =
-  import.meta.env.VITE_API_URL || "https://psychosphere-backend-312700987588.europe-central2.run.app/api/articles/";
+  import.meta.env.VITE_API_URL || "https://psychosphere-backend-312700987588.europe-central2.run.app";
 
 function formatDate(dateValue) {
   if (!dateValue) {

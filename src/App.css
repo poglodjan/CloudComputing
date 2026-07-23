@@ -1,6 +1,12 @@
 /* =====================================================
    GLOBALNY UKŁAD APLIKACJI
    ===================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap');
+
+/* Ten reset zapobiega rozjeżdżaniu się kontenerów przez paddingi */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
 #root {
   width: 100%;
@@ -19,6 +25,12 @@ body {
   padding: 0;
   overflow-x: hidden;
 
+  /* --- NOWE USTAWIENIA TYPOGRAFII --- */
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
   background-color: #ffffff;
   background-image: url("/static-images/background1.webp");
   background-repeat: no-repeat;
@@ -26,7 +38,6 @@ body {
   background-size: cover;
   background-attachment: fixed;
 }
-
 /* Wspólny kontener pod navbarem */
 
 .app-content {
@@ -58,29 +69,21 @@ body {
 }
 
 /* Główny tytuł każdej zwykłej strony */
-
-.app-content--default h1 {
-  display: inline-block;
-  max-width: 100%;
-  margin: 0 0 28px;
-  padding: 12px 20px;
-
+.app-content--default h1{
+  display: block;
+  margin: 0 0 32px;
+  
   font-size: clamp(2rem, 4vw, 3.5rem);
   font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.035em;
-
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  
+  /* Zostawiamy sam ciemnofioletowy tekst, usuwamy tła i ramki */
   color: #4c1d95;
-  background: rgba(255, 255, 255, 0.94);
-  border: 1px solid rgba(109, 40, 217, 0.16);
-  border-radius: 15px;
-  box-shadow: 0 12px 30px rgba(76, 29, 149, 0.14);
-  backdrop-filter: blur(10px);
-
-  text-shadow: none !important;
-  -webkit-text-stroke: 0 !important;
-}
-
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;}
 /* Globalne nagłówki sekcji */
 
 .app-content--default h2,
@@ -124,4 +127,12 @@ nav a {
 header a:hover,
 nav a:hover {
   color: #c4b5fd;
+}
+/* Wygląd aktywnego linku w nawigacji */
+header a.active,
+nav a.active {
+  color: #a78bfa; /* Jasny, przyjemny fiolet */
+  font-weight: 600;
+  border-bottom: 2px solid #a78bfa; /* Delikatna linia pod tekstem */
+  padding-bottom: 4px;
 }

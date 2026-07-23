@@ -27,32 +27,39 @@
     margin: 1.5%;
   }
 
-.nav-links {
-    list-style: none;
-    display: flex;
-    gap: 20px;
+/* NOWE NAVLINKS  zamiast klasycznego links */
+/* Resetujemy domyślny wygląd listy i układamy linki poziomo */
+.nav-NavLinks {
+  list-style: none; /* Usuwa brzydkie punktory */
+  margin: 0;
+  padding: 0;
+  display: flex;    /* Układa elementy w jednym rzędzie */
+  align-items: center; /* Wyśrodkowuje je w pionie */
+  gap: 32px;        /* Zróbmy ładny odstęp między zakładkami (możesz go dostosować) */
 }
-  
-  .nav-links li {
-    display: inline;
-  }
-  
-  .nav-links a {
+
+.nav-NavLinks li {
+  margin: 0;
+  padding: 0;
+  display: inline;
+}
+
+.nav-NavLinks a {
     color: white;
     text-decoration: none;
     font-size: 18px;
     padding: 8px 12px;
   }
-    .nav-links a, .logout-button {
+.nav-NavLinks a, .logout-button {
         white-space: nowrap;
     }
-  .nav-links a:hover {
+/* .nav-NavLinks a:hover {
     background-color: #555;
     border-radius: 5px;
-  }
+  } */
 
 
-    .logout-section a {
+.logout-section a {
         margin-right: 50px; /* lub margin-left: 20px w zależności od kierunku */
         font-size: 18px;
     }

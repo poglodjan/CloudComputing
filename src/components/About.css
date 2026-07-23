@@ -1,0 +1,84 @@
+/* =====================================================
+   SEKCJA ZESPOŁU NA STRONIE O NAS
+   ===================================================== */
+
+.team-section {
+  width: 100%;
+  margin-top: 80px; /* Odstęp od tekstów i wideo powyżej */
+  padding-bottom: 40px;
+  text-align: center;
+}
+
+.team-title {
+  color: #4c1d95; /* Fiolet pasujący do nagłówków */
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 800;
+  margin-bottom: 40px;
+}
+
+/* Siatka układająca zdjęcia (4 w rzędzie na dużym ekranie) */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  justify-items: center;
+}
+
+/* Magia docinania zdjęć do zaokrąglonych kwadratów */
+.team-photo {
+  width: 100%;
+  max-width: 250px;
+  aspect-ratio: 1 / 1;      
+  object-fit: cover;        
+  border-radius: 50%;       /* ZMIANA: 50% wymusza idealne koło i obcina czarne rogi */
+  
+  box-shadow: 0 10px 30px rgba(76, 29, 149, 0.15);
+  border: 3px solid rgba(255, 255, 255, 0.9); /* Odrobinę grubsza ramka */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.team-photo:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(76, 29, 149, 0.25);
+}
+/* Kontener dla pojedynczej osoby */
+.team-member {
+  display: flex;
+  flex-direction: column; /* Układa zdjęcie, imię i rolę pionowo */
+  align-items: center;    /* Wyśrodkowuje elementy */
+  text-align: center;
+}
+
+/* Styl dla imienia */
+.team-name {
+  margin: 20px 0 4px 0; /* Odstęp od zdjęcia u góry, mały odstęp od roli na dole */
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #4c1d95; /* Ciemny fiolet pasujący do nagłówków */
+}
+
+/* Styl dla roli */
+.team-role {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #6d28d9; /* Jaśniejszy fiolet */
+  opacity: 0.9;
+}
+/* Responsywność - układanie na mniejszych ekranach */
+@media (max-width: 900px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 zdjęcia w rzędzie na tabletach */
+  }
+}
+
+@media (max-width: 500px) {
+  .team-grid {
+    gap: 20px;
+    padding: 0 20px;
+    grid-template-columns: repeat(2, 1fr); /* Zostawiamy 2 mniejsze kwadraty obok siebie na telefonach */
+  }
+}

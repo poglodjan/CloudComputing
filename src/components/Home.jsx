@@ -4,7 +4,7 @@ import "./PsychoSphere.css"; // Reużywamy wspólne style
 const Home = () => {
   return (
     <div className="psychosfera-container">
-      <h1>Neurodetective</h1>
+      {/* <h1>Neurodetective</h1> */}
 
       <div className="psych-section">
         <h2>O projekcie</h2>
